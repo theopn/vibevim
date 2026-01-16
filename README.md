@@ -30,7 +30,13 @@ alias vibevim="NVIM_APPNAME=vibevim nvim"
 
 ## Phase 1 (2026-01-16)
 
-1. Following `init.lua`, containing the standard [lazy.nvim bootstrap](https://lazy.folke.io/installation) and [avente.nvim spec](https://github.com/yetone/avante.nvim/tree/e89eb79abf5754645e20aa6074da10ed20bba33c?tab=readme-ov-file#installation) was created.
+Created following initial configuration files:
+
+- `init.lua`:
+    ```lua
+    require("config.lazy")
+    ```
+-  `./lua/config/lazy.lua`: [lazy.nvim bootstrap](https://lazy.folke.io/installation)
     ```lua
     -- Bootstrap lazy.nvim
     local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -40,7 +46,7 @@ alias vibevim="NVIM_APPNAME=vibevim nvim"
       if vim.v.shell_error ~= 0 then
         vim.api.nvim_echo({
           { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-          { out,                            "WarningMsg" },
+          { out, "WarningMsg" },
           { "\nPress any key to exit..." },
         }, true, {})
         vim.fn.getchar()
@@ -48,118 +54,141 @@ alias vibevim="NVIM_APPNAME=vibevim nvim"
       end
     end
     vim.opt.rtp:prepend(lazypath)
-
+    
+    -- Make sure to setup `mapleader` and `maplocalleader` before
+    -- loading lazy.nvim so that mappings are correct.
+    -- This is also a good place to setup other settings (vim.opt)
+    vim.g.mapleader = " "
+    vim.g.maplocalleader = "\\"
+    
+    -- Setup lazy.nvim
     require("lazy").setup({
-      {
-        "yetone/avante.nvim",
-        -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-        -- ⚠️ must add this setting! ! !
-        build = vim.fn.has("win32") ~= 0
-            and "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false"
-            or "make",
-        event = "VeryLazy",
-        version = false, -- Never set this value to "*"! Never!
-        ---@module 'avante'
-        ---@type avante.Config
-        opts = {
-          -- add any opts here
-          -- this file can contain specific instructions for your project
-          instructions_file = "avante.md",
-          -- for example
-          provider = "claude",
-          providers = {
-            claude = {
-              endpoint = "https://api.anthropic.com",
-              model = "claude-sonnet-4-20250514",
-              timeout = 30000, -- Timeout in milliseconds
+      spec = {
+        -- import your plugins
+        { import = "plugins" },
+      },
+      -- Configure any other settings here. See the documentation for more details.
+      -- colorscheme that will be used when installing plugins.
+      install = { colorscheme = { "habamax" } },
+      -- automatically check for plugin updates
+      checker = { enabled = true },
+    })
+    ```
+- `./lua/plugins/avante.lua`: [avente.nvim spec](https://github.com/yetone/avante.nvim/tree/e89eb79abf5754645e20aa6074da10ed20bba33c?tab=readme-ov-file#installation)
+    ```lua
+    return
+    {
+      "yetone/avante.nvim",
+      -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+      -- ⚠️ must add this setting! ! !
+      build = vim.fn.has("win32") ~= 0
+          and "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false"
+          or "make",
+      event = "VeryLazy",
+      version = false, -- Never set this value to "*"! Never!
+      ---@module 'avante'
+      ---@type avante.Config
+      opts = {
+        -- add any opts here
+        -- this file can contain specific instructions for your project
+        instructions_file = "avante.md",
+        -- for example
+        provider = "claude",
+        providers = {
+          claude = {
+            endpoint = "https://api.anthropic.com",
+            model = "claude-sonnet-4-20250514",
+            timeout = 30000, -- Timeout in milliseconds
               extra_request_body = {
                 temperature = 0.75,
                 max_tokens = 20480,
               },
-            },
-            moonshot = {
-              endpoint = "https://api.moonshot.ai/v1",
-              model = "kimi-k2-0711-preview",
-              timeout = 30000, -- Timeout in milliseconds
-              extra_request_body = {
-                temperature = 0.75,
-                max_tokens = 32768,
-              },
+          },
+          moonshot = {
+            endpoint = "https://api.moonshot.ai/v1",
+            model = "kimi-k2-0711-preview",
+            timeout = 30000, -- Timeout in milliseconds
+            extra_request_body = {
+              temperature = 0.75,
+              max_tokens = 32768,
             },
           },
         },
-        dependencies = {
-          "nvim-lua/plenary.nvim",
-          "MunifTanjim/nui.nvim",
-          --- The below dependencies are optional,
-          "nvim-mini/mini.pick",         -- for file_selector provider mini.pick
-          "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
-          "hrsh7th/nvim-cmp",            -- autocompletion for avante commands and mentions
-          "ibhagwan/fzf-lua",            -- for file_selector provider fzf
-          "stevearc/dressing.nvim",      -- for input provider dressing
-          "folke/snacks.nvim",           -- for input provider snacks
-          "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-          "zbirenbaum/copilot.lua",      -- for providers='copilot'
-          {
-            -- support for image pasting
-            "HakonHarnes/img-clip.nvim",
-            event = "VeryLazy",
-            opts = {
-              -- recommended settings
-              default = {
-                embed_image_as_base64 = false,
-                prompt_for_file_name = false,
-                drag_and_drop = {
-                  insert_mode = true,
-                },
-                -- required for Windows users
-                use_absolute_path = true,
+      },
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+        "MunifTanjim/nui.nvim",
+        --- The below dependencies are optional,
+        "nvim-mini/mini.pick", -- for file_selector provider mini.pick
+        "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
+        "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
+        "ibhagwan/fzf-lua", -- for file_selector provider fzf
+        "stevearc/dressing.nvim", -- for input provider dressing
+        "folke/snacks.nvim", -- for input provider snacks
+        "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+        "zbirenbaum/copilot.lua", -- for providers='copilot'
+        {
+          -- support for image pasting
+          "HakonHarnes/img-clip.nvim",
+          event = "VeryLazy",
+          opts = {
+            -- recommended settings
+            default = {
+              embed_image_as_base64 = false,
+              prompt_for_file_name = false,
+              drag_and_drop = {
+                insert_mode = true,
               },
+              -- required for Windows users
+              use_absolute_path = true,
             },
-          },
-          {
-            -- Make sure to set this up properly if you have lazy=true
-            'MeanderingProgrammer/render-markdown.nvim',
-            opts = {
-              file_types = { "markdown", "Avante" },
-            },
-            ft = { "markdown", "Avante" },
           },
         },
-      }
-    })
+        {
+          -- Make sure to set this up properly if you have lazy=true
+          'MeanderingProgrammer/render-markdown.nvim',
+          opts = {
+            file_types = { "markdown", "Avante" },
+          },
+          ft = { "markdown", "Avante" },
+        },
+      },
+    }
     ```
-2. Following `avante.md` was manually created, which closely resembles the [example avante.md](https://github.com/yetone/avante.nvim/tree/e89eb79abf5754645e20aa6074da10ed20bba33c?tab=readme-ov-file#project-instructions-with-avantemd)
-    ```markdown
-    # project instructions for VibeVim
 
-    ## your role
+Following `avante.md` was manually created, which closely resembles the [example avante.md](https://github.com/yetone/avante.nvim/tree/e89eb79abf5754645e20aa6074da10ed20bba33c?tab=readme-ov-file#project-instructions-with-avantemd):
 
-    You are an expert specializing in Lua, Neovim API, Neovim plugins, and Neovim configuration development in Lua. You understand bleeding-edge Neovim plugins and configuration paradigm.
+```markdown
+# project instructions for VibeVim
 
-    ## your mission
+## your role
 
-    help build a Neovim configuration by:
+You are an expert specializing in Lua, Neovim API, Neovim plugins, and Neovim configuration development in Lua. You understand bleeding-edge Neovim plugins and configuration paradigm.
 
-    - writing a Neovim configuration in Lua
-    - researching and adding Neovim plugins
+## your mission
 
-    ## project context
+help build a Neovim configuration by:
 
-    VibeVim is a Neovim configuration specializing in AI-driven development (vibe coding). We prioritize modern design and UI, ease of usage, and modular configuration.
+- writing a Neovim configuration in Lua
+- researching and adding Neovim plugins
 
-    ## technology stack
+## project context
 
-    - Lua for Neovim configuration development
-    - Lazy.nvim: plugin manager
-    - avante.nvim: main AI coding assistant
+VibeVim is a Neovim configuration specializing in AI-driven development (vibe coding). We prioritize modern design and UI, ease of usage, and modular configuration.
 
-    ## coding standards
+## technology stack
 
-    - prefer modular configuration for each plugins and configuration
-    - write self-documenting code with clear variable names
-    - add Luadoc comment for complex functions
-    - use double quotes for strings, unless the string contains double quotes
-    ```
-3. I used Claude Pro subscription
+- Lua for Neovim configuration development
+- Lazy.nvim: plugin manager
+- avante.nvim: main AI coding assistant
+
+## coding standards
+
+- prefer modular configuration for each plugins and configuration
+- write self-documenting code with clear variable names
+- add Luadoc comment for complex functions
+- use double quotes for strings, unless the string contains double quotes
+```
+
+I used Claude Pro subscription
 
