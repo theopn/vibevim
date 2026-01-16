@@ -8,7 +8,8 @@ If it (ever) becomes the future, I would rather
 (a) be aware of its capability and how they work
 (b) use Neovim rather than a VS Code-based editor
 
-I started with a simple `init.lua` containing the recommended installation for [avante.nvim](https://github.com/yetone/avante.nvim) and let it build its own configuration from there.
+I started with a simple `init.lua` containing the installation for [avante.nvim](https://github.com/yetone/avante.nvim) and [lazy.nvim](https://github.com/folke/lazy.nvim), along with the initial `avante.md` file.
+From there, I used mostly avante.nvim to build the configuration.
 All the project instructions, prompts, and other manual interventions (if any) will be documented here.
 
 If you want my Neovim configuration without any AI tools and usage (why would I ever use an AI to write my config when it is my hobby?), check out my [dotfiles repository](https://github.com/theopn/dotfiles).
@@ -27,7 +28,9 @@ alias vibevim="NVIM_APPNAME=vibevim nvim"
 
 ## Development
 
-- 2026-01-16: following `init.lua`, containing the standard [lazy.nvim bootstrap](https://lazy.folke.io/installation) and [avente.nvim spec](https://github.com/yetone/avante.nvim?tab=readme-ov-file#installation) was created.
+## Phase 1 (2026-01-16)
+
+1. Following `init.lua`, containing the standard [lazy.nvim bootstrap](https://lazy.folke.io/installation) and [avente.nvim spec](https://github.com/yetone/avante.nvim/tree/e89eb79abf5754645e20aa6074da10ed20bba33c?tab=readme-ov-file#installation) was created.
     ```lua
     -- Bootstrap lazy.nvim
     local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -126,5 +129,37 @@ alias vibevim="NVIM_APPNAME=vibevim nvim"
       }
     })
     ```
+2. Following `avante.md` was manually created, which closely resembles the [example avante.md](https://github.com/yetone/avante.nvim/tree/e89eb79abf5754645e20aa6074da10ed20bba33c?tab=readme-ov-file#project-instructions-with-avantemd)
+    ```markdown
+    # project instructions for VibeVim
 
+    ## your role
+
+    You are an expert specializing in Lua, Neovim API, Neovim plugins, and Neovim configuration development in Lua. You understand bleeding-edge Neovim plugins and configuration paradigm.
+
+    ## your mission
+
+    help build a Neovim configuration by:
+
+    - writing a Neovim configuration in Lua
+    - researching and adding Neovim plugins
+
+    ## project context
+
+    VibeVim is a Neovim configuration specializing in AI-driven development (vibe coding). We prioritize modern design and UI, ease of usage, and modular configuration.
+
+    ## technology stack
+
+    - Lua for Neovim configuration development
+    - Lazy.nvim: plugin manager
+    - avante.nvim: main AI coding assistant
+
+    ## coding standards
+
+    - prefer modular configuration for each plugins and configuration
+    - write self-documenting code with clear variable names
+    - add Luadoc comment for complex functions
+    - use double quotes for strings, unless the string contains double quotes
+    ```
+3. I used Claude Pro subscription
 
